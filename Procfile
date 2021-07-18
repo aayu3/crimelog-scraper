@@ -1,1 +1,1 @@
-web: python scraper_and_parser.py
+worker: python scraper_and_parser.py
