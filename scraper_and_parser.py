@@ -18,7 +18,7 @@ db = cluster["Crime-DB"]
 collection = db["Crime-Data"]
 
 options = Options()
-options.binary_location = r'D:\Program Files\Mozilla Firefox\firefox.exe'
+options.binary_location = r'/app/vendor/firefox/firefox/'
 
 url = 'https://police.illinois.edu/crime-reporting/daily-crime-log/'
 
@@ -51,7 +51,7 @@ tabula.convert_into("crime-log.pdf", "illinoisCrime.csv", output_format="csv", p
 
 driver.quit()
 
-gmaps = googlemaps.Client(key='insert maps API key here')
+gmaps = googlemaps.Client(key='AIzaSyDvE8BIa0kz0jL91KDb2PqJ86X7jsiKMUM')
 
 file = "illinoisCrime.csv"
 location_bias_long = 88.2272
