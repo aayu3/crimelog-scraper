@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from contextlib import closing
 from requests_html import HTMLSession
 from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver import Firefox
 import urllib
 import time 
 import pymongo 
@@ -17,13 +17,12 @@ cluster = MongoClient("mongodb+srv://pythonPDFInfo:lKskN2Po6b480C7B@uiuccrimedat
 db = cluster["Crime-DB"]
 collection = db["Crime-Data"]
 
-options = Options()
-options.binary_location = r'/app/vendor/firefox/firefox/'
+
 
 url = 'https://police.illinois.edu/crime-reporting/daily-crime-log/'
 
 f = open('crime-log.html', 'w')
-driver = webdriver.Firefox(firefox_options=options)
+driver = Firefox()
 driver.get(url)
 time.sleep(5)
 full_text = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
