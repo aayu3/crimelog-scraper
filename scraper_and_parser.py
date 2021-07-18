@@ -4,6 +4,7 @@ import os
 import pandas as pd
 import numpy as np
 import csv
+import dnspython
 from bs4 import BeautifulSoup
 from contextlib import closing
 from requests_html import HTMLSession
@@ -12,7 +13,7 @@ import urllib
 import time 
 import pymongo 
 from pymongo import MongoClient
-cluster = MongoClient("mongodb+srv://pythonPDFInfo:lKskN2Po6b480C7B@uiuccrimedatabase.vg06i.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+cluster = MongoClient("mongodb://pythonPDFInfo:lKskN2Po6b480C7B@uiuccrimedatabase.vg06i.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 
 db = cluster["Crime-DB"]
 collection = db["Crime-Data"]
