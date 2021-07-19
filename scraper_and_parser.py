@@ -13,7 +13,7 @@ import time
 import pymongo 
 '''include in requirements.txt dnspython==2.1.0'''
 from pymongo import MongoClient
-cluster = MongoClient("mongodb+srv://pythonPDFInfo:lKskN2Po6b480C7B@uiuccrimedatabase.vg06i.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+cluster = MongoClient(os.environ.get("MONGODBURL"))
 
 db = cluster["Crime-DB"]
 collection = db["Crime-Data"]
@@ -56,7 +56,7 @@ convert_into("crime-log.pdf", "illinoisCrime.csv", output_format="csv", pages='a
 
 driver.quit()
 
-gmaps = googlemaps.Client(key='AIzaSyDvE8BIa0kz0jL91KDb2PqJ86X7jsiKMUM')
+gmaps = googlemaps.Client(key=os.environ.get("MAPS_API_KEY"))
 
 file = "illinoisCrime.csv"
 location_bias_long = 88.2272
