@@ -6,4 +6,3 @@ beautifulsoup4==4.9.3
 googlemaps==4.4.7
 requests_html==0.10.0
 selenium==3.141.0
-
