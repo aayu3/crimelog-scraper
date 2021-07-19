@@ -1,4 +1,4 @@
-import tabula
+from tabula.io import convert_into
 import googlemaps
 import os
 import pandas as pd
@@ -52,7 +52,7 @@ with open("crime-log.html") as fp:
 	f.write(webContent)
 	f.close()
 
-tabula.io.convert_into("crime-log.pdf", "illinoisCrime.csv", output_format="csv", pages='all')
+convert_into("crime-log.pdf", "illinoisCrime.csv", output_format="csv", pages='all')
 
 driver.quit()
 
