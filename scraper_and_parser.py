@@ -4,7 +4,6 @@ import os
 import pandas as pd
 import numpy as np
 import csv
-import dnspython
 from bs4 import BeautifulSoup
 from contextlib import closing
 from requests_html import HTMLSession
