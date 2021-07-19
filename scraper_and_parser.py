@@ -11,6 +11,7 @@ from selenium import webdriver
 import urllib
 import time 
 import pymongo 
+'''include in requirements.txt dnspython==2.1.0'''
 from pymongo import MongoClient
 cluster = MongoClient("mongodb+srv://pythonPDFInfo:lKskN2Po6b480C7B@uiuccrimedatabase.vg06i.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 
