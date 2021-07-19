@@ -52,7 +52,7 @@ with open("crime-log.html") as fp:
 	f.write(webContent)
 	f.close()
 
-tabula.convert_into("crime-log.pdf", "illinoisCrime.csv", output_format="csv", pages='all')
+tabula.io.convert_into("crime-log.pdf", "illinoisCrime.csv", output_format="csv", pages='all')
 
 driver.quit()
 

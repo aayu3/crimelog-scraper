@@ -7,4 +7,4 @@ dnspython==2.1.0
 googlemaps==4.4.7
 requests_html==0.10.0
 selenium==3.141.0
-
+tabula==1.0.5
