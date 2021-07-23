@@ -83,7 +83,7 @@ for index, row in csvFile.iterrows():
 				"Latitude": float(location[0]["geometry"]["location"]["lat"]),
 				"Longitude" : float(location[0]["geometry"]["location"]["lng"]),
 				"StreetAddress": location[0]["formatted_address"], # I could also use row["Location"], but I think this one is better
-				"Description": row["Crime Description"].replace("?", "-"),
+				"Description": row["Crime Description"].replace("?","-"),
 				"Disposition": row["Disposition"]
 			}
 			print("Added: %s:%s"%(row['Incident'],row['Crime Description']))
