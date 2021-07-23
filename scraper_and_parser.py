@@ -87,7 +87,7 @@ for index, row in csvFile.iterrows():
 				"Disposition": row["Disposition"]
 			}
 			print("Added: %s:%s"%(row['Incident'],row['Crime Description']))
-			#collection.insert_one(formattedrow)
+			collection.insert_one(formattedrow)
 		else:
 			print("Skipped: %s:%s"%(row['Incident'],row['Crime Description']))
 		
