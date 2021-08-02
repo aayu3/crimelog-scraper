@@ -3,58 +3,31 @@ import googlemaps
 import os
 import pandas as pd
 import numpy as np
-import csv
-from bs4 import BeautifulSoup
-from contextlib import closing
-from requests_html import HTMLSession
-from selenium import webdriver
-import urllib
-import time 
-import pymongo 
-'''include in requirements.txt dnspython==2.1.0'''
 from pymongo import MongoClient
 cluster = MongoClient(os.environ.get("MONGODBURL"))
 
 db = cluster["Crime-DB"]
 collection = db["Crime-Data"]
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--disable-dev-shm-usage")
-chrome_options.add_argument("--no-sandbox")
+import re
+from urllib import request
+response0 = request.urlopen("https://police.illinois.edu/crime-reporting/daily-crime-log/")
 
-
-url = 'https://police.illinois.edu/crime-reporting/daily-crime-log/'
-
-f = open('crime-log.html', 'w')
-driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-driver.get(url)
-time.sleep(5)
-full_text = driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
-
-print(full_text)
-f.write(full_text)
+q = str(response0.read())
+script_url=re.search(r"https://illinois.edu/blog/pc.*?\.js",q)[0]
+print(script_url)
+response1 = request.urlopen(script_url)
+q1 = str(response1.read())
+pdf_url=re.search(r"https://blogs.illinois.edu/files.*?\.pdf",q1)[0]
+print(pdf_url)
+response = request.urlopen(pdf_url)
+webContent = response.read()
+f = open('crime-log.pdf', 'wb')
+f.write(webContent)
 f.close()
-
-
-
-
-with open("crime-log.html") as fp:
-	soup = BeautifulSoup(fp, 'html.parser')
-	link_div = soup.find("div", class_="topic-title")		
-	
-	link_a = link_div.a
-	response = urllib.request.urlopen(link_a.get('href'))
-
-	webContent = response.read()
-	f = open('crime-log.pdf', 'wb')
-	f.write(webContent)
-	f.close()
 
 convert_into("crime-log.pdf", "illinoisCrime.csv", output_format="csv", pages='all')
 
-driver.quit()
 
 gmaps = googlemaps.Client(key=os.environ.get("MAPS_API_KEY"))
 
