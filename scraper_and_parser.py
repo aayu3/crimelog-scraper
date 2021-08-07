@@ -58,10 +58,7 @@ for index, row in csvFile.iterrows():
     crime_desc = row["Crime Description"].replace("‐", "-")
     crime_incident = row['Incident'].replace("‐", "-")
     if place_candidate['status'] == "OK":
-        if collection.find_one(filter={
-                "CaseID": crime_incident,
-                "Description": crime_desc
-        }) is None:
+        if (collection.find_one(filter={"CaseID":crime_incident,"Description":crime_desc}) is None) and (row['Date reported']!="Date reported")::
             location = gmaps.reverse_geocode(
                 place_candidate['candidates'][0]['place_id'])
             formattedrow = {
