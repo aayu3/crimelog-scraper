@@ -58,7 +58,7 @@ for index, row in csvFile.iterrows():
     crime_desc = row["Crime Description"].replace("‐", "-")
     crime_incident = row['Incident'].replace("‐", "-")
     if place_candidate['status'] == "OK":
-        if (collection.find_one(filter={"CaseID":crime_incident,"Description":crime_desc}) is None) and (row['Date reported']!="Date reported")::
+        if (collection.find_one(filter={"CaseID":crime_incident,"Description":crime_desc}) is None) and (row['Date reported']!="Date reported"):
             location = gmaps.reverse_geocode(
                 place_candidate['candidates'][0]['place_id'])
             formattedrow = {
@@ -77,4 +77,10 @@ for index, row in csvFile.iterrows():
             print("Added: %s:%s" % (crime_incident, crime_desc))
             collection.insert_one(formattedrow)
         else:
-            print("Skipped: %s:%s" % (crime_incident, crime_desc))
+            db_check = collection.find_one(filter={"CaseID":row['Incident'],"Description":row["Crime Description"]})
+            if db_check['Disposition']==row['Disposition']:
+                print("Skipped: %s:%s"%(row['Incident'],row['Crime Description']))
+            else:
+                collection.find_one_and_update(filter={"CaseID":row['Incident'],"Description":row["Crime Description"]},update={'$set':{'Disposition': row['Disposition']}})
+                print("Updated disposition for " + row['Incident'] + " from " + db_check['Disposition'] + " to " + row['Disposition'])
+        
