@@ -58,30 +58,30 @@ for index, row in csvFile.iterrows():
     crime_desc = row["Crime Description"].replace("‐", "-")
     crime_incident = row['Incident'].replace("‐", "-")
     if place_candidate['status'] == "OK":
-        if (collection.find_one(filter={"CaseID":crime_incident,"Description":crime_desc}) is None) and (row['Date reported']!="Date reported"):
-            location = gmaps.reverse_geocode(
-                place_candidate['candidates'][0]['place_id'])
-            formattedrow = {
-                "CaseID": crime_incident,
-                "DateReported": row['Date reported'],
-                "TimeReported": row['Time reported'],
-                "DateOccurred": row['Date occurred'],
-                "TimeOccurred": row['Time occurred'],
-                "Latitude": float(location[0]["geometry"]["location"]["lat"]),
-                "Longitude": float(location[0]["geometry"]["location"]["lng"]),
-                "StreetAddress": location[0]
-                ["formatted_address"],  # I could also use row["Location"], but I think this one is better
-                "Description": crime_desc,
-                "Disposition": row["Disposition"]
-            }
-            print("Added: %s:%s" % (crime_incident, crime_desc))
-            collection.insert_one(formattedrow)
-        else:
-            db_check = collection.find_one(filter={"CaseID":row['Incident'],"Description":row["Crime Description"]})
-            if db_check != None:
+        if (row['Date reported']!="Date reported"):
+            if (collection.find_one(filter={"CaseID":crime_incident,"Description":crime_desc}) is None):
+                location = gmaps.reverse_geocode(
+                    place_candidate['candidates'][0]['place_id'])
+                formattedrow = {
+                    "CaseID": crime_incident,
+                    "DateReported": row['Date reported'],
+                    "TimeReported": row['Time reported'],
+                    "DateOccurred": row['Date occurred'],
+                    "TimeOccurred": row['Time occurred'],
+                    "Latitude": float(location[0]["geometry"]["location"]["lat"]),
+                    "Longitude": float(location[0]["geometry"]["location"]["lng"]),
+                    "StreetAddress": location[0]
+                    ["formatted_address"],  # I could also use row["Location"], but I think this one is better
+                    "Description": crime_desc,
+                    "Disposition": row["Disposition"]
+                }
+                print("Added: %s:%s" % (crime_incident, crime_desc))
+                collection.insert_one(formattedrow)
+            else:
+                db_check = collection.find_one(filter={"CaseID":row['Incident'],"Description":row["Crime Description"]})           
                 if db_check['Disposition']==row['Disposition']:
                     print("Skipped: %s:%s"%(row['Incident'],row['Crime Description']))
-            else:
-                collection.find_one_and_update(filter={"CaseID":row['Incident'],"Description":row["Crime Description"]},update={'$set':{'Disposition': row['Disposition']}})
-                print("Updated disposition for " + row['Incident'] + " from " + db_check['Disposition'] + " to " + row['Disposition'])
+                else:
+                    collection.find_one_and_update(filter={"CaseID":row['Incident'],"Description":row["Crime Description"]},update={'$set':{'Disposition': row['Disposition']}})
+                    print("Updated disposition for " + row['Incident'] + " from " + db_check['Disposition'] + " to " + row['Disposition'])
         
