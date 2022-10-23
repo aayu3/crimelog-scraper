@@ -14,7 +14,7 @@ import re
 from urllib import request
 
 response0 = request.urlopen(
-    "https://police.illinois.edu/crime-reporting/daily-crime-log/")
+    "https://police.illinois.edu/info/daily-crime-log/")
 
 q = str(response0.read())
 script_url = re.search(r"https://illinois.edu/blog/pc.*?\.js", q)[0]
