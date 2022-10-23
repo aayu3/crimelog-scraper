@@ -16,11 +16,13 @@ from urllib import request
 response0 = request.urlopen(
     "https://police.illinois.edu/info/daily-crime-log/")
 
+'''
 q = str(response0.read())
 script_url = re.search(r"https://illinois.edu/blog/pc.*?\.js", q)[0]
 print(script_url)
 response1 = request.urlopen(script_url)
-q1 = str(response1.read())
+'''
+q1 = str(response0.read())
 pdf_url = re.search(r"https://blogs.illinois.edu/files.*?\.pdf", q1)[0]
 print(pdf_url)
 response = request.urlopen(pdf_url)
