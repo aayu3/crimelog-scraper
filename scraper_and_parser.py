@@ -18,7 +18,7 @@ response0 = request.urlopen(
 
 
 q = str(response0.read())
-script_url = re.findall(r"https://illinois.edu/blog/pc.*?\.js", q)[1]
+script_url = re.findall(r"https://blogs.illinois.edu/pc.*?\.js", q)[1]
 print(script_url)
 response1 = request.urlopen(script_url)
 q1 = str(response1.read())
