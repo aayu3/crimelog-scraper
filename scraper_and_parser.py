@@ -1,4 +1,4 @@
-from tabula import convert_into
+#from tabula import convert_into
 import googlemaps
 import os
 import pandas as pd
@@ -10,8 +10,8 @@ cluster = MongoClient(os.environ.get("MONGODBURL"))
 db = cluster["Crime-DB"]
 collection = db["Crime-Data"]
 
-import re
-from urllib import request
+#import re
+#from urllib import request
 
 '''response0 = request.urlopen(
     "https://police.illinois.edu/info/daily-crime-log/")
