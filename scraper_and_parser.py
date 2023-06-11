@@ -1,4 +1,4 @@
-from tabula.io import convert_into
+from tabula import convert_into
 import googlemaps
 import os
 import pandas as pd
@@ -13,16 +13,15 @@ collection = db["Crime-Data"]
 import re
 from urllib import request
 
-response0 = request.urlopen(
+'''response0 = request.urlopen(
     "https://police.illinois.edu/info/daily-crime-log/")
 
-'''
+
 q = str(response0.read())
-script_url = re.search(r"https://illinois.edu/blog/pc.*?\.js", q)[0]
-print(script_url)
-response1 = request.urlopen(script_url)
-'''
-q1 = str(response0.read())
+script_url = re.findall(r"https://blogs.illinois.edu/pc.*?\.js", q)
+response1 = request.urlopen(script_url[1])
+
+q1 = str(response1.read())
 pdf_url = re.search(r"https://blogs.illinois.edu/files.*?\.pdf", q1)[0]
 print(pdf_url)
 response = request.urlopen(pdf_url)
@@ -31,19 +30,21 @@ f = open('crime-log.pdf', 'wb')
 f.write(webContent)
 f.close()
 
+
 convert_into("crime-log.pdf",
              "illinoisCrime.csv",
              output_format="csv",
              pages='all')
-
-gmaps = googlemaps.Client(key=os.environ.get("MAPS_API_KEY"))
+'''
+gmaps = googlemaps.Client("AIzaSyBPT_xHwW_IL1cat26Fb0pKP3voiKHPIXA")
 
 file = "illinoisCrime.csv"
 location_bias_long = 88.2272
 location_bias_lat = 40.1020
 location_bias_radius = 500
 locations_long_lat = []
-csvFile = pd.read_csv(file, encoding="utf8")
+csvFile = pd.read_html("https://police.illinois.edu/info/daily-crime-log/")
+print(csvFile)
 csvFile["Longitude"] = np.nan
 csvFile["Latitude"] = np.nan
 
