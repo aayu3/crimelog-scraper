@@ -68,11 +68,11 @@ for row in rows:
     table_data.append(row_data)
 
 csvFile = pd.DataFrame(table_data, columns=['Number', 'Reported Date/Time', 'Occurred From Date/Time', 'Location', 'Description', 'Disposition'])
-csvFile = df.drop(df.index[0])
-csvFile['Date reported'] = df['Reported Date/Time'].apply(lambda x: 'UNKNOWN' if 'UNKNOWN' in x else x.split(' ')[0])
-csvFile['Time reported'] = df['Reported Date/Time'].apply(lambda x: 'UNKNOWN' if 'UNKNOWN' in x else x.split(' ')[1])
-csvFile['Date occurred'] = df['Occurred From Date/Time'].apply(lambda x: 'UNKNOWN' if 'UNKNOWN' in x else x.split(' ')[0])
-csvFile['Time occurred'] = df['Occurred From Date/Time'].apply(lambda x: 'UNKNOWN' if 'UNKNOWN' in x else x.split(' ')[1])
+csvFile = csvFile.drop(csvFile.index[0])
+csvFile['Date reported'] = csvFile['Reported Date/Time'].apply(lambda x: 'UNKNOWN' if 'UNKNOWN' in x else x.split(' ')[0])
+csvFile['Time reported'] = csvFile['Reported Date/Time'].apply(lambda x: 'UNKNOWN' if 'UNKNOWN' in x else x.split(' ')[1])
+csvFile['Date occurred'] = csvFile['Occurred From Date/Time'].apply(lambda x: 'UNKNOWN' if 'UNKNOWN' in x else x.split(' ')[0])
+csvFile['Time occurred'] = csvFile['Occurred From Date/Time'].apply(lambda x: 'UNKNOWN' if 'UNKNOWN' in x else x.split(' ')[1])
 gmaps = googlemaps.Client(gmap_key)
 
 file = "illinoisCrime.csv"
