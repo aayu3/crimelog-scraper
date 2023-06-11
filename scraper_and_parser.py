@@ -6,6 +6,7 @@ import numpy as np
 from pymongo import MongoClient
 
 cluster = MongoClient(os.environ.get("MONGODBURL"))
+gmap_key = os.environ.get("GMAPKEY")
 
 db = cluster["Crime-DB"]
 collection = db["Crime-Data"]
@@ -36,7 +37,7 @@ convert_into("crime-log.pdf",
              output_format="csv",
              pages='all')
 '''
-gmaps = googlemaps.Client("AIzaSyBPT_xHwW_IL1cat26Fb0pKP3voiKHPIXA")
+gmaps = googlemaps.Client(gmap_key)
 
 file = "illinoisCrime.csv"
 location_bias_long = 88.2272
