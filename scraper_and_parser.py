@@ -85,12 +85,12 @@ csvFile["Longitude"] = np.nan
 csvFile["Latitude"] = np.nan
 
 for index, row in csvFile.iterrows():
-    if row["General Location"].split()[-1].lower() not in [
-            "urbana", "champaign", "chicago", "il"
+    if row["Location"].split()[-1].lower() not in [
+            "urbana", "champaign", "chicago", "il", "campus"
     ]:
-        row["General Location"] += " Urbana champaign"
+        row["Location"] += " Urbana champaign"
     place_candidate = gmaps.find_place(
-        row["General Location"],
+        row["Location"],
         'textquery',
         location_bias="circle:" + str(location_bias_radius) + "@" +
         str(location_bias_lat) + "," + str(location_bias_long))
