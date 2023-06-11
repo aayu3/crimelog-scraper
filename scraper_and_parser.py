@@ -117,11 +117,11 @@ for index, row in csvFile.iterrows():
                 print("Added: %s:%s" % (crime_incident, crime_desc))
                 collection.insert_one(formattedrow)
             else:
-                db_check = collection.find_one(filter={"CaseID":row['Incident'],"Description":row["Crime Description"]})
+                db_check = collection.find_one(filter={"CaseID":row['Number'],"Description":row["Description"]})
                 if (db_check != None):           
                     if db_check['Disposition']==row['Disposition']:
-                        print("Skipped: %s:%s"%(row['Incident'],row['Crime Description']))
+                        print("Skipped: %s:%s"%(row['Number'],row['Description']))
                     else:
-                        collection.find_one_and_update(filter={"CaseID":row['Incident'],"Description":row["Crime Description"]},update={'$set':{'Disposition': row['Disposition']}})
-                        print("Updated disposition for " + row['Incident'] + " from " + db_check['Disposition'] + " to " + row['Disposition'])
+                        collection.find_one_and_update(filter={"CaseID":row['Number'],"Description":row["Description"]},update={'$set':{'Disposition': row['Disposition']}})
+                        print("Updated disposition for " + row['Number'] + " from " + db_check['Disposition'] + " to " + row['Disposition'])
         
