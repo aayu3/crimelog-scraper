@@ -18,9 +18,9 @@ from urllib import request
 
 
 q = str(response0.read())
-script_url = re.findall(r"https://blogs.illinois.edu/pc.*?\.js", q)
-response1 = request.urlopen(script_url[1])
-
+script_url = re.findall(r"https://blogs.illinois.edu/pc.*?\.js", q)[1]
+print(script_url)
+response1 = request.urlopen(script_url)
 q1 = str(response1.read())
 pdf_url = re.search(r"https://blogs.illinois.edu/files.*?\.pdf", q1)[0]
 print(pdf_url)
