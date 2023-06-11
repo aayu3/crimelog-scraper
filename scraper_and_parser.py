@@ -4,7 +4,10 @@ import os
 import pandas as pd
 import numpy as np
 from pymongo import MongoClient
+import requests
+from bs4 import BeautifulSoup
 
+import pandas as pd
 cluster = MongoClient(os.environ.get("MONGODBURL"))
 gmap_key = os.environ.get("GMAPKEY")
 
@@ -37,6 +40,39 @@ convert_into("crime-log.pdf",
              output_format="csv",
              pages='all')
 '''
+
+
+# Create a DataFrame from the table data
+
+# Specify the URL of the WordPress webpage
+url = 'https://police.illinois.edu/info/daily-crime-log/'  # Replace with the actual URL
+
+# Send a GET request and retrieve the HTML content
+response = requests.get(url)
+html_content = response.text
+
+# Parse the HTML content using BeautifulSoup
+soup = BeautifulSoup(html_content, 'html.parser')
+
+# Find the table element
+table = soup.find('table')
+
+# Extract the table rows and cells
+rows = table.find_all('tr')
+
+# Process the table data and create a list of lists
+table_data = []
+for row in rows:
+    cells = row.find_all('td')
+    row_data = [cell.get_text(strip=True) for cell in cells]
+    table_data.append(row_data)
+
+csvFile = pd.DataFrame(table_data, columns=['Number', 'Reported Date/Time', 'Occurred From Date/Time', 'Location', 'Description', 'Disposition'])
+csvFile = df.drop(df.index[0])
+csvFile['Date reported'] = df['Reported Date/Time'].apply(lambda x: 'UNKNOWN' if 'UNKNOWN' in x else x.split(' ')[0])
+csvFile['Time reported'] = df['Reported Date/Time'].apply(lambda x: 'UNKNOWN' if 'UNKNOWN' in x else x.split(' ')[1])
+csvFile['Date occurred'] = df['Occurred From Date/Time'].apply(lambda x: 'UNKNOWN' if 'UNKNOWN' in x else x.split(' ')[0])
+csvFile['Time occurred'] = df['Occurred From Date/Time'].apply(lambda x: 'UNKNOWN' if 'UNKNOWN' in x else x.split(' ')[1])
 gmaps = googlemaps.Client(gmap_key)
 
 file = "illinoisCrime.csv"
@@ -44,8 +80,7 @@ location_bias_long = 88.2272
 location_bias_lat = 40.1020
 location_bias_radius = 500
 locations_long_lat = []
-csvFile = pd.read_html("https://police.illinois.edu/info/daily-crime-log/")
-print(csvFile)
+
 csvFile["Longitude"] = np.nan
 csvFile["Latitude"] = np.nan
 
@@ -59,8 +94,8 @@ for index, row in csvFile.iterrows():
         'textquery',
         location_bias="circle:" + str(location_bias_radius) + "@" +
         str(location_bias_lat) + "," + str(location_bias_long))
-    crime_desc = row["Crime Description"].replace("‐", "-")
-    crime_incident = row['Incident'].replace("‐", "-")
+    crime_desc = row["Description"].replace("‐", "-")
+    crime_incident = row['Number'].replace("‐", "-")
     if place_candidate['status'] == "OK":
         if (row['Date reported']!="Date reported"):
             if (collection.find_one(filter={"CaseID":crime_incident,"Description":crime_desc}) is None):
