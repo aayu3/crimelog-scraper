@@ -6,4 +6,4 @@ googlemaps==4.4.7
 requests_html==0.10.0
 html5lib
 requests
-
+bs4
