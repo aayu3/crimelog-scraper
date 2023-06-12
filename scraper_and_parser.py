@@ -140,7 +140,7 @@ for index, row in csvFile.iterrows():
                     "Updated disposition for "
                     + row["Number"]
                     + " from "
-                    + db_check["Disposition"]
+                    + case["Disposition"]
                     + " to "
                     + row["Disposition"]
                 )
