@@ -7,3 +7,6 @@ requests_html==0.10.0
 html5lib
 requests
 bs4
+dateutil
+python-dateutil
+datetime

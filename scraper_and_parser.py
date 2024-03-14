@@ -1,13 +1,13 @@
 # from tabula import convert_into
 import googlemaps
 import os
-import pandas as pd
 import numpy as np
 from pymongo import MongoClient
 import requests
 from bs4 import BeautifulSoup
-
+from dateutil.parser import parse
 import pandas as pd
+import datetime
 
 cluster = MongoClient(os.environ.get("MONGODBURL"))
 gmap_key = os.environ.get("GMAPKEY")
@@ -15,6 +15,34 @@ gmap_key = os.environ.get("GMAPKEY")
 db = cluster["Crime-DB"]
 collection = db["Crime-Data"]
 
+def parse_datetime(input_string):
+    # Split the input string by spaces
+    date_time_parts = input_string.split()
+    
+    # Initialize date and time variables
+    date_occurred = "UNKNOWN"
+    time_occurred = "UNKNOWN"
+
+    # Check each part of the string for date or time
+    for part in date_time_parts:
+        # Attempt to parse as a date
+        try:
+            parsed_date = parse(part)
+            if parsed_date.time() == datetime.time(0):
+                date_occurred = parsed_date.strftime("%m/%d/%Y")
+            continue
+        except ValueError:
+            pass
+        
+        # Attempt to parse as a time
+        try:
+            parsed_time = parse(part).time()
+            time_occurred = parsed_time.strftime("%H:%M:%S")
+            continue
+        except ValueError:
+            pass
+
+    return date_occurred, time_occurred
 
 # Create a DataFrame from the table data
 
@@ -32,7 +60,8 @@ soup = BeautifulSoup(html_content, "html.parser")
 table = soup.find("table")
 
 # Extract the table rows and cells
-rows = table.find_all("tr")
+body = table.find("tbody")
+rows = body.find_all("tr")
 
 # Process the table data and create a list of lists
 table_data = []
@@ -52,19 +81,27 @@ csvFile = pd.DataFrame(
         "Disposition",
     ],
 )
-csvFile = csvFile.drop(csvFile.index[0])
-csvFile["Date reported"] = csvFile["Reported Date/Time"].apply(
-    lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[0]
-)
-csvFile["Time reported"] = csvFile["Reported Date/Time"].apply(
-    lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[1]
-)
-csvFile["Date occurred"] = csvFile["Occurred From Date/Time"].apply(
-    lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[0]
-)
-csvFile["Time occurred"] = csvFile["Occurred From Date/Time"].apply(
-    lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[1]
-)
+
+csvFile["Date occurred"], csvFile["Time occurred"] = zip(*csvFile["Occurred From Date/Time"].apply(parse_datetime))
+csvFile["Date occurred"].fillna("UNKNOWN", inplace=True)
+csvFile["Time occurred"].fillna("UNKNOWN", inplace=True)
+
+csvFile["Date reported"], csvFile["Time reported"] = zip(*csvFile["Reported Date/Time"].apply(parse_datetime))
+csvFile["Date reported"].fillna("UNKNOWN", inplace=True)
+csvFile["Time reported"].fillna("UNKNOWN", inplace=True)
+# csvFile["Date reported"] = csvFile["Reported Date/Time"].apply(
+#     lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[0]
+# )
+# csvFile["Time reported"] = csvFile["Reported Date/Time"].apply(
+#     lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[1]
+# )
+
+# csvFile["Date occurred"] = csvFile["Occurred From Date/Time"].apply(
+#     lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[0]
+# )
+# csvFile["Time occurred"] = csvFile["Occurred From Date/Time"].apply(
+#     lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[1]
+# )
 gmaps = googlemaps.Client(gmap_key)
 
 file = "illinoisCrime.csv"
