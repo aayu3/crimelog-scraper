@@ -9,11 +9,11 @@ from dateutil.parser import parse
 import pandas as pd
 import datetime
 
-cluster = cluster = MongoClient(os.environ.get("MONGODBURL"))
+cluster = MongoClient(os.environ.get("MONGODBURL"))
 gmap_key = os.environ.get("GMAPKEY")
 
 db = cluster["Crime-DB"]
-collection = db["Crime-Data-Test"]
+collection = db["Crime-Data-Date"]
 
 #default date: day before uiuc founded
 default_date = datetime.datetime(1868, 3, 1,0,0,0)
@@ -85,7 +85,7 @@ csvFile = pd.DataFrame(
         "Disposition",
     ],
 )
-csvFile = csvFile.head(20)
+print("tables dimensions: " + str(csvFile.shape[0]))
 csvFile["Date occurred"], csvFile["Time occurred"] = zip(*csvFile["Occurred From Date/Time"].apply(parse_datetime))
 csvFile["Date occurred"].fillna(default_date, inplace=True)
 csvFile["Time occurred"].fillna("UNKNOWN", inplace=True)
@@ -93,19 +93,7 @@ csvFile["Time occurred"].fillna("UNKNOWN", inplace=True)
 csvFile["Date reported"], csvFile["Time reported"] = zip(*csvFile["Reported Date/Time"].apply(parse_datetime))
 csvFile["Date reported"].fillna(default_date, inplace=True)
 csvFile["Time reported"].fillna("UNKNOWN", inplace=True)
-# csvFile["Date reported"] = csvFile["Reported Date/Time"].apply(
-#     lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[0]
-# )
-# csvFile["Time reported"] = csvFile["Reported Date/Time"].apply(
-#     lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[1]
-# )
 
-# csvFile["Date occurred"] = csvFile["Occurred From Date/Time"].apply(
-#     lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[0]
-# )
-# csvFile["Time occurred"] = csvFile["Occurred From Date/Time"].apply(
-#     lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[1]
-# )
 gmaps = googlemaps.Client(gmap_key)
 
 file = "illinoisCrime.csv"
