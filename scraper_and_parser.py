@@ -9,18 +9,22 @@ from dateutil.parser import parse
 import pandas as pd
 import datetime
 
-cluster = MongoClient(os.environ.get("MONGODBURL"))
+cluster = cluster = MongoClient(os.environ.get("MONGODBURL"))
 gmap_key = os.environ.get("GMAPKEY")
 
 db = cluster["Crime-DB"]
-collection = db["Crime-Data"]
+collection = db["Crime-Data-Test"]
+
+#default date: day before uiuc founded
+default_date = datetime.datetime(1868, 3, 1,0,0,0)
 
 def parse_datetime(input_string):
     # Split the input string by spaces
     date_time_parts = input_string.split()
+
     
     # Initialize date and time variables
-    date_occurred = "UNKNOWN"
+    date_occurred = default_date
     time_occurred = "UNKNOWN"
 
     # Check each part of the string for date or time
@@ -29,7 +33,7 @@ def parse_datetime(input_string):
         try:
             parsed_date = parse(part)
             if parsed_date.time() == datetime.time(0):
-                date_occurred = parsed_date.strftime("%m/%d/%Y")
+                date_occurred = parsed_date
             continue
         except ValueError:
             pass
@@ -81,13 +85,13 @@ csvFile = pd.DataFrame(
         "Disposition",
     ],
 )
-
+csvFile = csvFile.head(20)
 csvFile["Date occurred"], csvFile["Time occurred"] = zip(*csvFile["Occurred From Date/Time"].apply(parse_datetime))
-csvFile["Date occurred"].fillna("UNKNOWN", inplace=True)
+csvFile["Date occurred"].fillna(default_date, inplace=True)
 csvFile["Time occurred"].fillna("UNKNOWN", inplace=True)
 
 csvFile["Date reported"], csvFile["Time reported"] = zip(*csvFile["Reported Date/Time"].apply(parse_datetime))
-csvFile["Date reported"].fillna("UNKNOWN", inplace=True)
+csvFile["Date reported"].fillna(default_date, inplace=True)
 csvFile["Time reported"].fillna("UNKNOWN", inplace=True)
 # csvFile["Date reported"] = csvFile["Reported Date/Time"].apply(
 #     lambda x: "UNKNOWN" if "UNKNOWN" in x else x.split(" ")[0]
