@@ -1,0 +1,27 @@
+name: Daily Crime Log Scraper
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # Runs daily at 8am UTC
+  workflow_dispatch:       # Allows manual trigger from GitHub UI
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scraper
+        env:
+          MONGODBURL: ${{ secrets.MONGODBURL }}
+          GMAPKEY: ${{ secrets.GMAPKEY }}
+        run: python3 scraper_and_parser.py

@@ -1,6 +1,8 @@
 # from tabula import convert_into
 import googlemaps
 import os
+from dotenv import load_dotenv
+load_dotenv()
 import numpy as np
 from pymongo import MongoClient
 import requests
@@ -51,7 +53,7 @@ def parse_datetime(input_string):
 # Create a DataFrame from the table data
 
 # Specify the URL of the WordPress webpage
-url = "https://police.illinois.edu/info/daily-crime-log/"  # Replace with the actual URL
+url = "https://police.illinois.edu/crime-stats-and-clery/daily-crime-log-and-police-blotter/"
 
 # Send a GET request and retrieve the HTML content
 response = requests.get(url)
@@ -87,12 +89,12 @@ csvFile = pd.DataFrame(
 )
 print("tables dimensions: " + str(csvFile.shape[0]))
 csvFile["Date occurred"], csvFile["Time occurred"] = zip(*csvFile["Occurred From Date/Time"].apply(parse_datetime))
-csvFile["Date occurred"].fillna(default_date, inplace=True)
-csvFile["Time occurred"].fillna("UNKNOWN", inplace=True)
+csvFile["Date occurred"] = csvFile["Date occurred"].fillna(default_date)
+csvFile["Time occurred"] = csvFile["Time occurred"].fillna("UNKNOWN")
 
 csvFile["Date reported"], csvFile["Time reported"] = zip(*csvFile["Reported Date/Time"].apply(parse_datetime))
-csvFile["Date reported"].fillna(default_date, inplace=True)
-csvFile["Time reported"].fillna("UNKNOWN", inplace=True)
+csvFile["Date reported"] = csvFile["Date reported"].fillna(default_date)
+csvFile["Time reported"] = csvFile["Time reported"].fillna("UNKNOWN")
 
 gmaps = googlemaps.Client(gmap_key)
 
